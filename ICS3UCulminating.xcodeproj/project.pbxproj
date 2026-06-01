@@ -14,6 +14,8 @@
 		014157D12FCE09FE003745A8 /* HousesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014157D02FCE09FE003745A8 /* HousesListView.swift */; };
 		014157D32FCE09FE003745A8 /* HouseItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014157D22FCE09FE003745A8 /* HouseItemView.swift */; };
 		014157D52FCE09FE003745A8 /* RELEASE.md in Resources */ = {isa = PBXBuildFile; fileRef = 014157D42FCE09FE003745A8 /* RELEASE.md */; };
+		014CBC552FCE169A00142BE6 /* TranslationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014CBC542FCE169A00142BE6 /* TranslationViewModel.swift */; };
+		014CBC572FCE169F00142BE6 /* TranslationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014CBC562FCE169F00142BE6 /* TranslationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +27,8 @@
 		014157D02FCE09FE003745A8 /* HousesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HousesListView.swift; sourceTree = "<group>"; };
 		014157D22FCE09FE003745A8 /* HouseItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseItemView.swift; sourceTree = "<group>"; };
 		014157D42FCE09FE003745A8 /* RELEASE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = RELEASE.md; sourceTree = "<group>"; };
+		014CBC542FCE169A00142BE6 /* TranslationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationViewModel.swift; sourceTree = "<group>"; };
+		014CBC562FCE169F00142BE6 /* TranslationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				014157CD2FCE09FE003745A8 /* HouseListViewModel.swift */,
+				014CBC542FCE169A00142BE6 /* TranslationViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -88,6 +93,7 @@
 			children = (
 				014157D02FCE09FE003745A8 /* HousesListView.swift */,
 				014157D22FCE09FE003745A8 /* HouseItemView.swift */,
+				014CBC562FCE169F00142BE6 /* TranslationView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -167,6 +173,8 @@
 			files = (
 				014157D32FCE09FE003745A8 /* HouseItemView.swift in Sources */,
 				014157CB2FCE09FE003745A8 /* House.swift in Sources */,
+				014CBC552FCE169A00142BE6 /* TranslationViewModel.swift in Sources */,
+				014CBC572FCE169F00142BE6 /* TranslationView.swift in Sources */,
 				014157D12FCE09FE003745A8 /* HousesListView.swift in Sources */,
 				014157CE2FCE09FE003745A8 /* HouseListViewModel.swift in Sources */,
 				014157C62FCE09FE003745A8 /* ICS3UCulminatingApp.swift in Sources */,
