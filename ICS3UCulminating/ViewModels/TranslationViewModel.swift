@@ -47,12 +47,23 @@ class TranslationViewModel {
     
     // MARK: - Initializer
     init() {
-        // Initializer doesn't need to do anything specific for now
+        configureAudioSession()
     }
     
     // MARK: - Functions
     
-    // Helper to get API language codes
+    // Configure the audio session so the app is allowed to play sound
+    private func configureAudioSession() {
+        do {
+            // This ensures the audio plays even if the ringer is off
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: .duckOthers)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to set up audio session: \(error)")
+        }
+    }
+    
+    // Helper to get API language codes for translation (MyMemory API)
     private func getLanguageCode(for name: String) -> String {
         if name == "English" {
             return "en"
@@ -61,34 +72,43 @@ class TranslationViewModel {
         } else if name == "Urdu" {
             return "ur"
         } else if name == "Dari" || name == "Hazaragi" {
-            // MyMemory uses 'fa' (Persian) for Dari and Hazaragi
-            return "fa"
+            return "fa" // MyMemory uses 'fa' for both
         } else {
             return "en"
         }
     }
     
-    // This function looks up the translation for the current input text using a web service
+    // Helper to get Voice codes for Text-to-Speech (BCP-47)
+    private func getVoiceCode(for name: String) -> String {
+        if name == "English" {
+            return "en-US"
+        } else if name == "French" {
+            return "fr-FR"
+        } else if name == "Urdu" {
+            return "ur-PK"
+        } else if name == "Dari" {
+            return "fa-AF" // Dari specific code
+        } else if name == "Hazaragi" {
+            return "fa-IR" // Closest available for Hazaragi
+        } else {
+            return "en-US"
+        }
+    }
+    
+    // This function looks up the translation using the MyMemory web service
     func translate() {
-        
-        // 1. Prepare for the translation
         let cleanedInput: String = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        // Don't do anything if the input is empty
         if cleanedInput.isEmpty == true {
             translatedText = ""
             return
         }
         
-        // Show that we are working
         isTranslating = true
         
-        // 2. Build the URL for the translation service (MyMemory)
         let sourceCode: String = getLanguageCode(for: sourceLanguage)
         let targetCode: String = getLanguageCode(for: targetLanguage)
         let langPair: String = sourceCode + "|" + targetCode
         
-        // Create the base URL components
         var components: URLComponents = URLComponents()
         components.scheme = "https"
         components.host = "api.mymemory.translated.net"
@@ -98,55 +118,76 @@ class TranslationViewModel {
             URLQueryItem(name: "langpair", value: langPair)
         ]
         
-        // Make sure the URL is valid
         guard let url: URL = components.url else {
-            translatedText = "Error: Could not create a valid search."
+            translatedText = "Error: Invalid URL."
             isTranslating = false
             return
         }
         
-        // 3. Start the network request
         Task {
             do {
                 let (data, _): (Data, URLResponse) = try await URLSession.shared.data(from: url)
-                
                 let decoder: JSONDecoder = JSONDecoder()
                 let result: TranslationResponse = try decoder.decode(TranslationResponse.self, from: data)
                 
-                // Update the UI
                 self.translatedText = result.responseData.translatedText
                 self.isTranslating = false
-                
             } catch {
-                self.translatedText = "Error: Could not connect to the translator."
+                self.translatedText = "Error: Connection failed."
                 self.isTranslating = false
             }
         }
     }
     
-    // This function reads the translated text out loud
-    func speak() {
-        // Don't do anything if there is no text to read
-        if translatedText.isEmpty == true {
-            return
-        }
-        
-        // Stop any current speech before starting new one
+    // Reads the input text out loud
+    func speakInput() {
+        if inputText.isEmpty == true { return }
+        speak(text: inputText, languageName: sourceLanguage)
+    }
+    
+    // Reads the translated text out loud
+    func speakOutput() {
+        if translatedText.isEmpty == true { return }
+        speak(text: translatedText, languageName: targetLanguage)
+    }
+    
+    // Generic speak function with improved voice matching
+    private func speak(text: String, languageName: String) {
+        // Stop any current speech immediately
         if synthesizer.isSpeaking == true {
             synthesizer.stopSpeaking(at: .immediate)
         }
         
-        // Create an utterance (the thing to be spoken)
-        let utterance: AVSpeechUtterance = AVSpeechUtterance(string: translatedText)
+        let utterance: AVSpeechUtterance = AVSpeechUtterance(string: text)
+        let preferredCode: String = getVoiceCode(for: languageName)
         
-        // Try to set the correct voice based on the target language
-        let targetCode: String = getLanguageCode(for: targetLanguage)
-        utterance.voice = AVSpeechSynthesisVoice(language: targetCode)
+        // 1. Try to find the exact voice for the code (e.g., fa-AF)
+        if let exactVoice = AVSpeechSynthesisVoice(language: preferredCode) {
+            utterance.voice = exactVoice
+        } else {
+            // 2. Fallback: Search for any voice that starts with the same language (e.g., "fa")
+            let languagePrefix = preferredCode.prefix(2)
+            let allVoices = AVSpeechSynthesisVoice.speechVoices()
+            
+            var foundVoice: AVSpeechSynthesisVoice? = nil
+            for voice in allVoices {
+                if voice.language.hasPrefix(languagePrefix) {
+                    foundVoice = voice
+                    break
+                }
+            }
+            
+            if let voice = foundVoice {
+                utterance.voice = voice
+            } else {
+                // 3. Last resort: If no matching voice exists, use English
+                // (This usually only happens if the user hasn't downloaded any voices for that language)
+                utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+            }
+        }
         
-        // Set the speech rate (0.5 is normal speed)
         utterance.rate = 0.5
-        
-        // Start speaking
+        utterance.volume = 1.0
         synthesizer.speak(utterance)
     }
 }

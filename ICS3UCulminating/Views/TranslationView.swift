@@ -60,9 +60,9 @@ struct TranslationView: View {
                             
                             Spacer()
                             
-                            // Blue circular icons from prototype
+                            // Input Speaker Button
                             Button(action: {
-                                // Action for sound
+                                viewModel.speakInput()
                             }) {
                                 Image(systemName: "speaker.wave.2.fill")
                                     .font(.system(size: 12))
@@ -130,7 +130,7 @@ struct TranslationView: View {
                                 
                                 // Output Speaker Button
                                 Button(action: {
-                                    viewModel.speak()
+                                    viewModel.speakOutput()
                                 }) {
                                     Image(systemName: "speaker.wave.2.fill")
                                         .font(.system(size: 12))
