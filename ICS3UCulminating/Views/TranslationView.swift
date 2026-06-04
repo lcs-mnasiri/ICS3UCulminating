@@ -17,68 +17,153 @@ struct TranslationView: View {
     // MARK: - Computed properties
     var body: some View {
         NavigationStack {
-            VStack(spacing: 30) {
-                
-                // Input Section
-                VStack(alignment: .leading) {
-                    Text("English")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 25) {
                     
-                    TextField("Type something...", text: $viewModel.inputText)
-                        .padding()
+                    Text("Translator Pro")
+                        .font(.system(size: 34, weight: .bold))
+                        .padding(.top, 20)
+                    
+                    // FROM SECTION
+                    VStack(alignment: .leading, spacing: 15) {
+                        Text("From:")
+                            .font(.system(size: 20, weight: .bold))
+                        
+                        // Custom Language Picker
+                        HStack(spacing: 0) {
+                            ForEach(viewModel.sourceLanguages, id: \.self) { language in
+                                Button(action: {
+                                    viewModel.sourceLanguage = language
+                                }) {
+                                    Text(language)
+                                        .font(.system(size: 14))
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 8)
+                                        .background(viewModel.sourceLanguage == language ? Color.white : Color.clear)
+                                        .foregroundColor(viewModel.sourceLanguage == language ? .black : .gray)
+                                        .clipShape(Capsule())
+                                        .shadow(color: viewModel.sourceLanguage == language ? .black.opacity(0.1) : .clear, radius: 2)
+                                }
+                            }
+                        }
+                        .padding(4)
                         .background(Color(.systemGray6))
-                        .cornerRadius(10)
-                        .submitLabel(.done)
-                        .onSubmit {
-                            viewModel.translate()
-                        }
-                }
-                
-                // Action Button
-                Button(action: {
-                    viewModel.translate()
-                }) {
-                    HStack {
-                        if viewModel.isTranslating == true {
-                            ProgressView()
-                                .padding(.trailing, 5)
-                        }
+                        .clipShape(Capsule())
                         
-                        Text(viewModel.isTranslating ? "Translating..." : "Translate")
-                            .fontWeight(.bold)
+                        // Input Field with Action Icons
+                        HStack {
+                            TextField("good morning", text: $viewModel.inputText)
+                                .font(.system(size: 18))
+                                .onSubmit {
+                                    viewModel.translate()
+                                }
+                            
+                            Spacer()
+                            
+                            // Blue circular icons from prototype
+                            Button(action: {
+                                // Action for sound
+                            }) {
+                                Image(systemName: "speaker.wave.2.fill")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.blue)
+                                    .clipShape(Circle())
+                            }
+                            
+                            Button(action: {
+                                // Action for camera/image
+                            }) {
+                                Image(systemName: "camera.fill")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.blue)
+                                    .clipShape(Circle())
+                            }
+                        }
+                        .padding(.bottom, 5)
+                        
+                        Divider()
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(viewModel.isTranslating ? Color.gray : Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                }
-                .disabled(viewModel.isTranslating)
-                
-                Divider()
-                
-                // Output Section
-                VStack(alignment: .leading) {
-                    Text("Farsi (Dari)")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
                     
-                    ZStack(alignment: .topLeading) {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(.systemGray6))
-                            .frame(minHeight: 100)
+                    // TO SECTION
+                    VStack(alignment: .leading, spacing: 15) {
+                        Text("To:")
+                            .font(.system(size: 20, weight: .bold))
                         
-                        Text(viewModel.translatedText)
-                            .padding()
-                            .foregroundColor(viewModel.isTranslating ? .secondary : .primary)
+                        // Custom Language Picker
+                        HStack(spacing: 0) {
+                            ForEach(viewModel.targetLanguages, id: \.self) { language in
+                                Button(action: {
+                                    viewModel.targetLanguage = language
+                                }) {
+                                    Text(language)
+                                        .font(.system(size: 14))
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 8)
+                                        .background(viewModel.targetLanguage == language ? Color.white : Color.clear)
+                                        .foregroundColor(viewModel.targetLanguage == language ? .black : .gray)
+                                        .clipShape(Capsule())
+                                        .shadow(color: viewModel.targetLanguage == language ? .black.opacity(0.1) : .clear, radius: 2)
+                                }
+                            }
+                        }
+                        .padding(4)
+                        .background(Color(.systemGray6))
+                        .clipShape(Capsule())
+                        
+                        // Output Text Area
+                        VStack(alignment: .leading, spacing: 20) {
+                            HStack(alignment: .top) {
+                                if viewModel.isTranslating {
+                                    ProgressView()
+                                        .padding(.top, 10)
+                                } else {
+                                    Text(viewModel.translatedText.isEmpty ? "Sub bakaire" : viewModel.translatedText)
+                                        .font(.system(size: 24))
+                                        .padding(.top, 10)
+                                }
+                                
+                                Spacer()
+                                
+                                // Output Speaker Button
+                                Button(action: {
+                                    viewModel.speak()
+                                }) {
+                                    Image(systemName: "speaker.wave.2.fill")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.white)
+                                        .padding(8)
+                                        .background(Color.blue)
+                                        .clipShape(Circle())
+                                }
+                                .padding(.top, 12)
+                                .opacity(viewModel.translatedText.isEmpty ? 0.3 : 1.0)
+                            }
+                            
+                            HStack {
+                                Spacer()
+                                // Blue translate/swap icon from prototype
+                                Button(action: {
+                                    viewModel.translate()
+                                }) {
+                                    Image(systemName: "arrow.left.arrow.right")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .padding(12)
+                                        .background(Color.blue)
+                                        .clipShape(Circle())
+                                }
+                            }
+                        }
                     }
+                    
+                    Spacer()
                 }
-                
-                Spacer()
+                .padding(.horizontal, 25)
             }
-            .padding()
-            .navigationTitle("Translator")
         }
     }
 }
