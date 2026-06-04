@@ -39,14 +39,22 @@ struct TranslationView: View {
                 Button(action: {
                     viewModel.translate()
                 }) {
-                    Text("Translate")
-                        .fontWeight(.bold)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                    HStack {
+                        if viewModel.isTranslating == true {
+                            ProgressView()
+                                .padding(.trailing, 5)
+                        }
+                        
+                        Text(viewModel.isTranslating ? "Translating..." : "Translate")
+                            .fontWeight(.bold)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(viewModel.isTranslating ? Color.gray : Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
                 }
+                .disabled(viewModel.isTranslating)
                 
                 Divider()
                 
@@ -63,6 +71,7 @@ struct TranslationView: View {
                         
                         Text(viewModel.translatedText)
                             .padding()
+                            .foregroundColor(viewModel.isTranslating ? .secondary : .primary)
                     }
                 }
                 
