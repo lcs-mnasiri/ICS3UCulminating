@@ -18,41 +18,28 @@ struct TranslationView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 25) {
+                VStack(alignment: .leading, spacing: 30) {
                     
                     Text("Translator Pro")
                         .font(.system(size: 34, weight: .bold))
                         .padding(.top, 20)
                     
-                    // FROM SECTION
+                    // FROM SECTION (Fixed to English)
                     VStack(alignment: .leading, spacing: 15) {
                         Text("From:")
                             .font(.system(size: 20, weight: .bold))
                         
-                        // Custom Language Picker
-                        HStack(spacing: 0) {
-                            ForEach(viewModel.sourceLanguages, id: \.self) { language in
-                                Button(action: {
-                                    viewModel.sourceLanguage = language
-                                }) {
-                                    Text(language)
-                                        .font(.system(size: 14))
-                                        .frame(maxWidth: .infinity)
-                                        .padding(.vertical, 8)
-                                        .background(viewModel.sourceLanguage == language ? Color.white : Color.clear)
-                                        .foregroundColor(viewModel.sourceLanguage == language ? .black : .gray)
-                                        .clipShape(Capsule())
-                                        .shadow(color: viewModel.sourceLanguage == language ? .black.opacity(0.1) : .clear, radius: 2)
-                                }
-                            }
-                        }
-                        .padding(4)
-                        .background(Color(.systemGray6))
-                        .clipShape(Capsule())
+                        // Simple Label instead of Picker
+                        Text("English")
+                            .font(.system(size: 16, weight: .medium))
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                            .background(Color(.systemGray6))
+                            .clipShape(Capsule())
                         
                         // Input Field with Action Icons
                         HStack {
-                            TextField("good morning", text: $viewModel.inputText)
+                            TextField("Enter English text...", text: $viewModel.inputText)
                                 .font(.system(size: 18))
                                 .onSubmit {
                                     viewModel.translate()
@@ -73,7 +60,7 @@ struct TranslationView: View {
                             }
                             
                             Button(action: {
-                                // Action for camera/image
+                                // Optional camera feature
                             }) {
                                 Image(systemName: "camera.fill")
                                     .font(.system(size: 12))
@@ -88,31 +75,18 @@ struct TranslationView: View {
                         Divider()
                     }
                     
-                    // TO SECTION
+                    // TO SECTION (Fixed to Farsi)
                     VStack(alignment: .leading, spacing: 15) {
                         Text("To:")
                             .font(.system(size: 20, weight: .bold))
                         
-                        // Custom Language Picker
-                        HStack(spacing: 0) {
-                            ForEach(viewModel.targetLanguages, id: \.self) { language in
-                                Button(action: {
-                                    viewModel.targetLanguage = language
-                                }) {
-                                    Text(language)
-                                        .font(.system(size: 14))
-                                        .frame(maxWidth: .infinity)
-                                        .padding(.vertical, 8)
-                                        .background(viewModel.targetLanguage == language ? Color.white : Color.clear)
-                                        .foregroundColor(viewModel.targetLanguage == language ? .black : .gray)
-                                        .clipShape(Capsule())
-                                        .shadow(color: viewModel.targetLanguage == language ? .black.opacity(0.1) : .clear, radius: 2)
-                                }
-                            }
-                        }
-                        .padding(4)
-                        .background(Color(.systemGray6))
-                        .clipShape(Capsule())
+                        // Simple Label instead of Picker
+                        Text("Farsi")
+                            .font(.system(size: 16, weight: .medium))
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                            .background(Color(.systemGray6))
+                            .clipShape(Capsule())
                         
                         // Output Text Area
                         VStack(alignment: .leading, spacing: 20) {
@@ -121,7 +95,7 @@ struct TranslationView: View {
                                     ProgressView()
                                         .padding(.top, 10)
                                 } else {
-                                    Text(viewModel.translatedText.isEmpty ? "Sub bakaire" : viewModel.translatedText)
+                                    Text(viewModel.translatedText.isEmpty ? "Translation will appear here" : viewModel.translatedText)
                                         .font(.system(size: 24))
                                         .padding(.top, 10)
                                 }
@@ -145,7 +119,7 @@ struct TranslationView: View {
                             
                             HStack {
                                 Spacer()
-                                // Blue translate/swap icon from prototype
+                                // Blue translate button
                                 Button(action: {
                                     viewModel.translate()
                                 }) {

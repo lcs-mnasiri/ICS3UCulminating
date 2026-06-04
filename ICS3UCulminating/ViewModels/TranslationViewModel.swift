@@ -32,72 +32,34 @@ class TranslationViewModel {
     // Tracking translation state
     var isTranslating: Bool = false
     
-    // Selected languages
-    var sourceLanguage: String = "English"
-    var targetLanguage: String = "Dari"
+    // Fixed languages for this version
+    let sourceLanguage: String = "English"
+    let targetLanguage: String = "Farsi"
     
-    // Available languages based on the prototype screenshot
-    let sourceLanguages: [String] = ["English", "French", "Urdu"]
-    let targetLanguages: [String] = ["Hazaragi", "Dari", "English"]
-    
-    // Speech synthesizer for the audio feature
+    // Use a single synthesizer instance for speech
     private let synthesizer: AVSpeechSynthesizer = AVSpeechSynthesizer()
-    
-    // MARK: - Computed properties
     
     // MARK: - Initializer
     init() {
-        configureAudioSession()
+        setupAudioSession()
     }
     
     // MARK: - Functions
     
-    // Configure the audio session so the app is allowed to play sound
-    private func configureAudioSession() {
+    private func setupAudioSession() {
         do {
-            // This ensures the audio plays even if the ringer is off
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: .duckOthers)
-            try AVAudioSession.sharedInstance().setActive(true)
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+            try session.setActive(true)
         } catch {
-            print("Failed to set up audio session: \(error)")
-        }
-    }
-    
-    // Helper to get API language codes for translation (MyMemory API)
-    private func getLanguageCode(for name: String) -> String {
-        if name == "English" {
-            return "en"
-        } else if name == "French" {
-            return "fr"
-        } else if name == "Urdu" {
-            return "ur"
-        } else if name == "Dari" || name == "Hazaragi" {
-            return "fa" // MyMemory uses 'fa' for both
-        } else {
-            return "en"
-        }
-    }
-    
-    // Helper to get Voice codes for Text-to-Speech (BCP-47)
-    private func getVoiceCode(for name: String) -> String {
-        if name == "English" {
-            return "en-US"
-        } else if name == "French" {
-            return "fr-FR"
-        } else if name == "Urdu" {
-            return "ur-PK"
-        } else if name == "Dari" {
-            return "fa-AF" // Dari specific code
-        } else if name == "Hazaragi" {
-            return "fa-IR" // Closest available for Hazaragi
-        } else {
-            return "en-US"
+            print("Audio session setup failed")
         }
     }
     
     // This function looks up the translation using the MyMemory web service
     func translate() {
         let cleanedInput: String = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
+        
         if cleanedInput.isEmpty == true {
             translatedText = ""
             return
@@ -105,9 +67,8 @@ class TranslationViewModel {
         
         isTranslating = true
         
-        let sourceCode: String = getLanguageCode(for: sourceLanguage)
-        let targetCode: String = getLanguageCode(for: targetLanguage)
-        let langPair: String = sourceCode + "|" + targetCode
+        // English (en) to Farsi (fa)
+        let langPair: String = "en|fa"
         
         var components: URLComponents = URLComponents()
         components.scheme = "https"
@@ -139,54 +100,44 @@ class TranslationViewModel {
         }
     }
     
-    // Reads the input text out loud
+    // Reads input text (English)
     func speakInput() {
-        if inputText.isEmpty == true { return }
-        speak(text: inputText, languageName: sourceLanguage)
-    }
-    
-    // Reads the translated text out loud
-    func speakOutput() {
-        if translatedText.isEmpty == true { return }
-        speak(text: translatedText, languageName: targetLanguage)
-    }
-    
-    // Generic speak function with improved voice matching
-    private func speak(text: String, languageName: String) {
-        // Stop any current speech immediately
-        if synthesizer.isSpeaking == true {
-            synthesizer.stopSpeaking(at: .immediate)
+        if inputText.isEmpty == false {
+            speak(text: inputText, voiceCode: "en-US")
         }
+    }
+    
+    // Reads translated text (Farsi)
+    func speakOutput() {
+        if translatedText.isEmpty == false {
+            speak(text: translatedText, voiceCode: "fa-IR")
+        }
+    }
+    
+    // Resilient speak function
+    private func speak(text: String, voiceCode: String) {
+        setupAudioSession()
+        synthesizer.stopSpeaking(at: .immediate)
         
-        let utterance: AVSpeechUtterance = AVSpeechUtterance(string: text)
-        let preferredCode: String = getVoiceCode(for: languageName)
+        let utterance = AVSpeechUtterance(string: text)
         
-        // 1. Try to find the exact voice for the code (e.g., fa-AF)
-        if let exactVoice = AVSpeechSynthesisVoice(language: preferredCode) {
-            utterance.voice = exactVoice
+        // Attempt to assign the requested voice
+        if let voice = AVSpeechSynthesisVoice(language: voiceCode) {
+            utterance.voice = voice
         } else {
-            // 2. Fallback: Search for any voice that starts with the same language (e.g., "fa")
-            let languagePrefix = preferredCode.prefix(2)
-            let allVoices = AVSpeechSynthesisVoice.speechVoices()
-            
-            var foundVoice: AVSpeechSynthesisVoice? = nil
-            for voice in allVoices {
-                if voice.language.hasPrefix(languagePrefix) {
-                    foundVoice = voice
-                    break
+            // Fallback for Farsi: scan for any Persian voice
+            if voiceCode == "fa-IR" {
+                let voices = AVSpeechSynthesisVoice.speechVoices()
+                for v in voices {
+                    if v.language.hasPrefix("fa") {
+                        utterance.voice = v
+                        break
+                    }
                 }
             }
-            
-            if let voice = foundVoice {
-                utterance.voice = voice
-            } else {
-                // 3. Last resort: If no matching voice exists, use English
-                // (This usually only happens if the user hasn't downloaded any voices for that language)
-                utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-            }
         }
         
-        utterance.rate = 0.5
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate
         utterance.volume = 1.0
         synthesizer.speak(utterance)
     }
