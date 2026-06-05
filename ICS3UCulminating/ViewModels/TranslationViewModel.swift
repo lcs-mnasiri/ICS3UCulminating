@@ -17,6 +17,13 @@ struct ResponseData: Codable {
     let translatedText: String
 }
 
+// MARK: - History Model
+struct TranslationHistory: Identifiable, Codable {
+    let id: UUID = UUID()
+    let englishText: String
+    let farsiText: String
+}
+
 // VIEW MODEL
 @Observable
 class TranslationViewModel {
@@ -31,6 +38,9 @@ class TranslationViewModel {
     
     // Tracking translation state
     var isTranslating: Bool = false
+    
+    // History of translations
+    var history: [TranslationHistory] = []
     
     // Fixed languages for this version
     let sourceLanguage: String = "English"
@@ -91,8 +101,14 @@ class TranslationViewModel {
                 let decoder: JSONDecoder = JSONDecoder()
                 let result: TranslationResponse = try decoder.decode(TranslationResponse.self, from: data)
                 
+                // Update the UI
                 self.translatedText = result.responseData.translatedText
                 self.isTranslating = false
+                
+                // Add to history
+                let newEntry = TranslationHistory(englishText: cleanedInput, farsiText: result.responseData.translatedText)
+                self.history.insert(newEntry, at: 0) // Add to the top of the list
+                
             } catch {
                 self.translatedText = "Error: Connection failed."
                 self.isTranslating = false
@@ -114,10 +130,19 @@ class TranslationViewModel {
         }
     }
     
+    // Reads a specific history item
+    func speakHistory(text: String) {
+        speak(text: text, voiceCode: "fa-IR")
+    }
+    
     // Resilient speak function
     private func speak(text: String, voiceCode: String) {
         setupAudioSession()
-        synthesizer.stopSpeaking(at: .immediate)
+        
+        // Ensure any current speech is stopped and reset
+        if synthesizer.isSpeaking {
+            synthesizer.stopSpeaking(at: .immediate)
+        }
         
         let utterance = AVSpeechUtterance(string: text)
         
@@ -137,8 +162,15 @@ class TranslationViewModel {
             }
         }
         
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate
+        // Slower rate can sometimes help with buffer issues
+        utterance.rate = 0.4 
         utterance.volume = 1.0
+        
         synthesizer.speak(utterance)
+    }
+    
+    // Function to clear history
+    func clearHistory() {
+        history.removeAll()
     }
 }

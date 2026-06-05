@@ -9,10 +9,6 @@
 /* Begin PBXBuildFile section */
 		014157C62FCE09FE003745A8 /* ICS3UCulminatingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014157C52FCE09FE003745A8 /* ICS3UCulminatingApp.swift */; };
 		014157C82FCE09FE003745A8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 014157C72FCE09FE003745A8 /* Assets.xcassets */; };
-		014157CB2FCE09FE003745A8 /* House.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014157CA2FCE09FE003745A8 /* House.swift */; };
-		014157CE2FCE09FE003745A8 /* HouseListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014157CD2FCE09FE003745A8 /* HouseListViewModel.swift */; };
-		014157D12FCE09FE003745A8 /* HousesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014157D02FCE09FE003745A8 /* HousesListView.swift */; };
-		014157D32FCE09FE003745A8 /* HouseItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014157D22FCE09FE003745A8 /* HouseItemView.swift */; };
 		014157D52FCE09FE003745A8 /* RELEASE.md in Resources */ = {isa = PBXBuildFile; fileRef = 014157D42FCE09FE003745A8 /* RELEASE.md */; };
 		014CBC552FCE169A00142BE6 /* TranslationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014CBC542FCE169A00142BE6 /* TranslationViewModel.swift */; };
 		014CBC572FCE169F00142BE6 /* TranslationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014CBC562FCE169F00142BE6 /* TranslationView.swift */; };
@@ -22,10 +18,6 @@
 		014157C22FCE09FE003745A8 /* ICS3UCulminating.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ICS3UCulminating.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		014157C52FCE09FE003745A8 /* ICS3UCulminatingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICS3UCulminatingApp.swift; sourceTree = "<group>"; };
 		014157C72FCE09FE003745A8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		014157CA2FCE09FE003745A8 /* House.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = House.swift; sourceTree = "<group>"; };
-		014157CD2FCE09FE003745A8 /* HouseListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseListViewModel.swift; sourceTree = "<group>"; };
-		014157D02FCE09FE003745A8 /* HousesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HousesListView.swift; sourceTree = "<group>"; };
-		014157D22FCE09FE003745A8 /* HouseItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseItemView.swift; sourceTree = "<group>"; };
 		014157D42FCE09FE003745A8 /* RELEASE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = RELEASE.md; sourceTree = "<group>"; };
 		014CBC542FCE169A00142BE6 /* TranslationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationViewModel.swift; sourceTree = "<group>"; };
 		014CBC562FCE169F00142BE6 /* TranslationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationView.swift; sourceTree = "<group>"; };
@@ -74,7 +66,6 @@
 		014157C92FCE09FE003745A8 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				014157CA2FCE09FE003745A8 /* House.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -82,7 +73,6 @@
 		014157CC2FCE09FE003745A8 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				014157CD2FCE09FE003745A8 /* HouseListViewModel.swift */,
 				014CBC542FCE169A00142BE6 /* TranslationViewModel.swift */,
 			);
 			path = ViewModels;
@@ -91,8 +81,6 @@
 		014157CF2FCE09FE003745A8 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				014157D02FCE09FE003745A8 /* HousesListView.swift */,
-				014157D22FCE09FE003745A8 /* HouseItemView.swift */,
 				014CBC562FCE169F00142BE6 /* TranslationView.swift */,
 			);
 			path = Views;
@@ -171,12 +159,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				014157D32FCE09FE003745A8 /* HouseItemView.swift in Sources */,
-				014157CB2FCE09FE003745A8 /* House.swift in Sources */,
 				014CBC552FCE169A00142BE6 /* TranslationViewModel.swift in Sources */,
 				014CBC572FCE169F00142BE6 /* TranslationView.swift in Sources */,
-				014157D12FCE09FE003745A8 /* HousesListView.swift in Sources */,
-				014157CE2FCE09FE003745A8 /* HouseListViewModel.swift in Sources */,
 				014157C62FCE09FE003745A8 /* ICS3UCulminatingApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

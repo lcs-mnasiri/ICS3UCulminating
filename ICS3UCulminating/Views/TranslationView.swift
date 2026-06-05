@@ -24,12 +24,11 @@ struct TranslationView: View {
                         .font(.system(size: 34, weight: .bold))
                         .padding(.top, 20)
                     
-                    // FROM SECTION (Fixed to English)
+                    // FROM SECTION (English)
                     VStack(alignment: .leading, spacing: 15) {
                         Text("From:")
                             .font(.system(size: 20, weight: .bold))
                         
-                        // Simple Label instead of Picker
                         Text("English")
                             .font(.system(size: 16, weight: .medium))
                             .padding(.horizontal, 20)
@@ -37,7 +36,6 @@ struct TranslationView: View {
                             .background(Color(.systemGray6))
                             .clipShape(Capsule())
                         
-                        // Input Field with Action Icons
                         HStack {
                             TextField("Enter English text...", text: $viewModel.inputText)
                                 .font(.system(size: 18))
@@ -47,22 +45,10 @@ struct TranslationView: View {
                             
                             Spacer()
                             
-                            // Input Speaker Button
                             Button(action: {
                                 viewModel.speakInput()
                             }) {
                                 Image(systemName: "speaker.wave.2.fill")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.white)
-                                    .padding(8)
-                                    .background(Color.blue)
-                                    .clipShape(Circle())
-                            }
-                            
-                            Button(action: {
-                                // Optional camera feature
-                            }) {
-                                Image(systemName: "camera.fill")
                                     .font(.system(size: 12))
                                     .foregroundColor(.white)
                                     .padding(8)
@@ -75,12 +61,11 @@ struct TranslationView: View {
                         Divider()
                     }
                     
-                    // TO SECTION (Fixed to Farsi)
+                    // TO SECTION (Farsi)
                     VStack(alignment: .leading, spacing: 15) {
                         Text("To:")
                             .font(.system(size: 20, weight: .bold))
                         
-                        // Simple Label instead of Picker
                         Text("Farsi")
                             .font(.system(size: 16, weight: .medium))
                             .padding(.horizontal, 20)
@@ -88,7 +73,6 @@ struct TranslationView: View {
                             .background(Color(.systemGray6))
                             .clipShape(Capsule())
                         
-                        // Output Text Area
                         VStack(alignment: .leading, spacing: 20) {
                             HStack(alignment: .top) {
                                 if viewModel.isTranslating {
@@ -102,7 +86,6 @@ struct TranslationView: View {
                                 
                                 Spacer()
                                 
-                                // Output Speaker Button
                                 Button(action: {
                                     viewModel.speakOutput()
                                 }) {
@@ -119,7 +102,6 @@ struct TranslationView: View {
                             
                             HStack {
                                 Spacer()
-                                // Blue translate button
                                 Button(action: {
                                     viewModel.translate()
                                 }) {
@@ -129,6 +111,54 @@ struct TranslationView: View {
                                         .padding(12)
                                         .background(Color.blue)
                                         .clipShape(Circle())
+                                }
+                            }
+                        }
+                    }
+                    
+                    // HISTORY SECTION
+                    if viewModel.history.isEmpty == false {
+                        VStack(alignment: .leading, spacing: 15) {
+                            HStack {
+                                Text("History")
+                                    .font(.system(size: 20, weight: .bold))
+                                
+                                Spacer()
+                                
+                                Button("Clear") {
+                                    viewModel.clearHistory()
+                                }
+                                .font(.system(size: 14))
+                                .foregroundColor(.blue)
+                            }
+                            
+                            ForEach(viewModel.history) { item in
+                                VStack(alignment: .leading, spacing: 8) {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(item.englishText)
+                                                .font(.system(size: 14))
+                                                .foregroundColor(.secondary)
+                                            Text(item.farsiText)
+                                                .font(.system(size: 18, weight: .medium))
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        Button(action: {
+                                            viewModel.speakHistory(text: item.farsiText)
+                                        }) {
+                                            Image(systemName: "speaker.wave.2")
+                                                .font(.system(size: 12))
+                                                .foregroundColor(.blue)
+                                                .padding(6)
+                                                .background(Color.blue.opacity(0.1))
+                                                .clipShape(Circle())
+                                        }
+                                    }
+                                    .padding()
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(12)
                                 }
                             }
                         }
