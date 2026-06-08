@@ -7,28 +7,37 @@
 
 import SwiftUI
 
+/// The main user interface for translating text from English to Farsi.
 struct TranslationView: View {
     
     // MARK: - Stored properties
     
-    // The view model that handles the translation logic
-    @State var viewModel = TranslationViewModel()
+    /// The view model that handles the translation logic and data.
+    /// We receive this from the parent (ICS3UCulminatingApp) so data is shared across the app.
+    var viewModel: TranslationViewModel
     
     // MARK: - Computed properties
+    
     var body: some View {
+        // We use @Bindable here to allow SwiftUI components (like TextField)
+        // to have a two-way connection to the View Model's properties.
+        @Bindable var viewModel = viewModel
+        
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 30) {
                     
+                    // Title for the screen
                     Text("Translator Pro")
                         .font(.system(size: 34, weight: .bold))
                         .padding(.top, 20)
                     
-                    // FROM SECTION (English)
+                    // MARK: - FROM SECTION (English)
                     VStack(alignment: .leading, spacing: 15) {
                         Text("From:")
                             .font(.system(size: 20, weight: .bold))
                         
+                        // Badge showing the source language
                         Text("English")
                             .font(.system(size: 16, weight: .medium))
                             .padding(.horizontal, 20)
@@ -37,14 +46,18 @@ struct TranslationView: View {
                             .clipShape(Capsule())
                         
                         HStack {
+                            // TextField for user input. The '$' creates a binding to the viewModel.
+                            // CONCEPT: Input (Gathering information from the user)
                             TextField("Enter English text...", text: $viewModel.inputText)
                                 .font(.system(size: 18))
                                 .onSubmit {
+                                    // Trigger translation when the user presses 'return'
                                     viewModel.translate()
                                 }
                             
                             Spacer()
                             
+                            // Button to read the input text aloud
                             Button(action: {
                                 viewModel.speakInput()
                             }) {
@@ -61,11 +74,12 @@ struct TranslationView: View {
                         Divider()
                     }
                     
-                    // TO SECTION (Farsi)
+                    // MARK: - TO SECTION (Farsi)
                     VStack(alignment: .leading, spacing: 15) {
                         Text("To:")
                             .font(.system(size: 20, weight: .bold))
                         
+                        // Badge showing the target language
                         Text("Farsi")
                             .font(.system(size: 16, weight: .medium))
                             .padding(.horizontal, 20)
@@ -75,10 +89,13 @@ struct TranslationView: View {
                         
                         VStack(alignment: .leading, spacing: 20) {
                             HStack(alignment: .top) {
+                                // Show a loading spinner if a translation is in progress
                                 if viewModel.isTranslating {
                                     ProgressView()
                                         .padding(.top, 10)
                                 } else {
+                                    // Display the translated text or a placeholder
+                                    // CONCEPT: Output (Showing the processed result to the user)
                                     Text(viewModel.translatedText.isEmpty ? "Translation will appear here" : viewModel.translatedText)
                                         .font(.system(size: 24))
                                         .padding(.top, 10)
@@ -86,6 +103,7 @@ struct TranslationView: View {
                                 
                                 Spacer()
                                 
+                                // Button to read the translated text aloud
                                 Button(action: {
                                     viewModel.speakOutput()
                                 }) {
@@ -97,11 +115,13 @@ struct TranslationView: View {
                                         .clipShape(Circle())
                                 }
                                 .padding(.top, 12)
+                                // Dim the button if there is no text to speak
                                 .opacity(viewModel.translatedText.isEmpty ? 0.3 : 1.0)
                             }
                             
                             HStack {
                                 Spacer()
+                                // Main button to trigger the translation
                                 Button(action: {
                                     viewModel.translate()
                                 }) {
@@ -116,54 +136,6 @@ struct TranslationView: View {
                         }
                     }
                     
-                    // HISTORY SECTION
-                    if viewModel.history.isEmpty == false {
-                        VStack(alignment: .leading, spacing: 15) {
-                            HStack {
-                                Text("History")
-                                    .font(.system(size: 20, weight: .bold))
-                                
-                                Spacer()
-                                
-                                Button("Clear") {
-                                    viewModel.clearHistory()
-                                }
-                                .font(.system(size: 14))
-                                .foregroundColor(.blue)
-                            }
-                            
-                            ForEach(viewModel.history) { item in
-                                VStack(alignment: .leading, spacing: 8) {
-                                    HStack {
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(item.englishText)
-                                                .font(.system(size: 14))
-                                                .foregroundColor(.secondary)
-                                            Text(item.farsiText)
-                                                .font(.system(size: 18, weight: .medium))
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                        Button(action: {
-                                            viewModel.speakHistory(text: item.farsiText)
-                                        }) {
-                                            Image(systemName: "speaker.wave.2")
-                                                .font(.system(size: 12))
-                                                .foregroundColor(.blue)
-                                                .padding(6)
-                                                .background(Color.blue.opacity(0.1))
-                                                .clipShape(Circle())
-                                        }
-                                    }
-                                    .padding()
-                                    .background(Color(.systemGray6))
-                                    .cornerRadius(12)
-                                }
-                            }
-                        }
-                    }
-                    
                     Spacer()
                 }
                 .padding(.horizontal, 25)
@@ -173,5 +145,5 @@ struct TranslationView: View {
 }
 
 #Preview {
-    TranslationView()
+    TranslationView(viewModel: TranslationViewModel())
 }
