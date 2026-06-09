@@ -67,36 +67,8 @@ struct HistoryView: View {
                         // Iterate over each item in the history and display it
                         // CONCEPT: Array Iteration (Outputting each item from a collection)
                         ForEach(viewModel.history) { item in
-                            VStack(alignment: .leading, spacing: 8) {
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        // Display the original English text
-                                        Text(item.englishText)
-                                            .font(.system(size: 14))
-                                            .foregroundColor(.secondary)
-                                        // Display the translated Farsi text
-                                        Text(item.farsiText)
-                                            .font(.system(size: 20, weight: .medium))
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    // Button to read the history item aloud
-                                    Button(action: {
-                                        viewModel.speakHistory(text: item.farsiText)
-                                    }) {
-                                        Image(systemName: "speaker.wave.2")
-                                            .font(.system(size: 14))
-                                            .foregroundColor(.blue)
-                                            .padding(10)
-                                            .background(Color.blue.opacity(0.1))
-                                            .clipShape(Circle())
-                                    }
-                                }
-                                .padding()
-                                .background(Color(.systemGray6))
-                                .cornerRadius(15)
-                            }
+                            // Use our Custom Subview here
+                            TranslationHistoryItemView(item: item, viewModel: viewModel)
                         }
                     }
                 }

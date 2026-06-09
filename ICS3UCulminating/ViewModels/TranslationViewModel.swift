@@ -51,6 +51,7 @@ class TranslationViewModel {
     
     /// A list of previous translations.
     // CONCEPT: Array (A collection used to store multiple items)
+    // ARRAY INITIALIZATION: We start with an empty list [].
     var history: [TranslationHistory] = []
     
     /// The language to translate from.
@@ -131,6 +132,7 @@ class TranslationViewModel {
                 self.isTranslating = false
                 
                 // Add this translation to the top of our history list.
+                // ARRAY POPULATION: We add new data into the history list.
                 let newEntry = TranslationHistory(englishText: cleanedInput, farsiText: result.responseData.translatedText)
                 self.history.insert(newEntry, at: 0)
                 
